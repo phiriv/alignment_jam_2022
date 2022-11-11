@@ -4,7 +4,7 @@ import json
 import numpy as np
 from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
 
-short = 100
+short = 500
 
 layer = 3
 mlp_layer_size = 3072
@@ -20,7 +20,7 @@ print(f"Using {device} device")
 torch.set_grad_enabled(False)
 
 model = EasyTransformer.from_pretrained('gpt2').to(device)
-print("Loaded model")
+print("Loaded model. n_blocks = {len(model.blocks)}")
 
 model.blocks[layer].mlp.hook_post.add_hook(activation_hook)
 print("Added hook")
@@ -63,6 +63,8 @@ tX = torch.zeros((token_n_train, mlp_layer_size))
 ty = torch.zeros((token_n_train,))
 row = 0
 for i in range(n_train):
+    if tokens[i] == None:
+        continue
     tn = len(tokens[i])
     tX[row:row+tn, :] = activs[i]
     ty[row:row+tn] = torch.log(probs[i][:, war_index])
@@ -74,6 +76,8 @@ analyzer.fit(tX, ty)
 print('Trained linear analyzer')
 
 for i in range(n_train, min(n + num_to_display, n)):
+    if tokens[i] == None:
+        continue
     string = ''
     print(activs[i].shape)
     guess_probs = np.exp(analyzer.predict(activs[i]))
@@ -87,7 +91,7 @@ for i in range(n_train, min(n + num_to_display, n)):
             elif prob > 0.001:
                 string += '\033[33m'
                 string += tok
-            elif guess_probs[j] > 0.01:
+            elif guess_probs[j] > 0.001:
                 string += '\033[32m'
                 string += tok
             else:
