@@ -8,7 +8,7 @@ for quote in quotes:
     results.append({
         'text': quote,
         'about_war': 1,
-        'source': 'wikiquotes'
+        'source': 'wikiquote'
     })
 
 os.makedirs('data', exist_ok=True)
