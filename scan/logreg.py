@@ -51,7 +51,7 @@ for i,item in enumerate(data[:n]):
 print(X)
 print(y)
 
-analyzer = LogisticRegression(C = 0.1)
+analyzer = LogisticRegression()
 analyzer.fit(X[:n_train,:],y[:n_train])
 yguess = analyzer.predict_proba(X[n_train:,:])[:,1]
 print(yguess.shape)
@@ -59,3 +59,26 @@ print(y[n_train:].shape)
 plt.scatter(yguess, y[n_train:] + torch.rand(n-n_train) * 0.1)
 plt.show()
 print(analyzer.get_params())
+
+# Get per-word activations
+for i,item in enumerate(data[:20]):
+    prompt = item['text']
+    activation_cache = []
+    prompt_tokens = model.to_tokens(prompt, prepend_bos=False)
+    if prompt_tokens.shape[1] == 0:
+        continue
+    model(prompt_tokens)
+    activations = activation_cache[0][0]
+    yguess = analyzer.predict_proba(activations)[:,1]
+    string = ''
+    for j in range(prompt_tokens.shape[1]):
+        if yguess[j] > 0.9:
+            string += '\033[31m'
+        elif yguess[j] > 0.8:
+            string += '\033[33m'
+        else:
+            string += '\033[m'
+        string += (f'{model.tokenizer.decode(prompt_tokens[0,j])}')
+    print(string)
+print('\033[m')
+
