@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
 from collections import defaultdict
 
-short = 10
+short = 50
 
 layer = 3
 mlp_layer_size = 3072
@@ -106,6 +106,9 @@ for i in range(n):
             string += tok
     print(f'{string}\033[m')
 
-for (pname, pindex), count in sorted(counts.items()):
-    print(pname, pindex, count)
+with open('microlearn_output.txt', 'w') as f:
+    for (pname, pindex), count in sorted(counts.items()):
+        print(pname, pindex, count)
+        f.write(f'{pname} {pindex} {count}\n')
+
 
