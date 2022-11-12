@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
 from collections import defaultdict
 
-short = 30
+short = 10
 
 layer = 3
 mlp_layer_size = 3072
@@ -70,11 +70,16 @@ def microtrain(tokens, position):
     loss = model(tokens.reshape(1, *tokens.shape))[0, position, war_index]
     loss.backward()
     for pname, p in model.named_parameters():
-        indices = torch.argmax(p.grad)
-        maximum = torch.max(p.grad)
+        gradabs = torch.abs(p.grad)
+        index = torch.argmax(gradabs).item()
+        maximum = torch.max(gradabs)
         if maximum > 5:
             #print(pname, indices.item(), maximum.item())
-            counts[(pname, indices.item())] += 1
+            indices = []
+            for dim in reversed(p.shape):
+                indices.append(index % dim)
+                index //= dim
+            counts[(pname, tuple(indices))] += 1
     torch.set_grad_enabled(False)
 
 for i in range(n):
