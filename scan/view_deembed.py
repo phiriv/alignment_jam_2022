@@ -2,7 +2,9 @@ import torch
 from easy_transformer import EasyTransformer
 import sys
 
-embed_dim = int(sys.argv[1])
+topic_word_nospace = sys.argv[1]
+topic_word = ' ' + topic_word_nospace
+embed_dim = int(sys.argv[2])
 
 device = 'cpu'
 print(f"Using {device} device")
@@ -17,5 +19,5 @@ values.sort(reverse=True)
 for i in range(len(values)):
     value, index = values[i]
     tok = model.tokenizer.decode(index)
-    if i < 50 or i > len(values) - 30 or tok == ' war':
+    if i < 50 or i > len(values) - 30 or tok == topic_word:
         print(i, tok, value)

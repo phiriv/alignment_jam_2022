@@ -1,0 +1,108 @@
+blocks.0.attn.W_K (20, 709, 9) 2
+blocks.0.attn.W_O (34, 9, 10) 4
+blocks.0.attn.W_O (40, 9, 10) 2
+blocks.0.attn.W_O (47, 9, 10) 3
+blocks.0.attn.W_O (50, 9, 10) 2
+blocks.0.attn.W_O (155, 9, 10) 2
+blocks.0.attn.W_O (171, 9, 10) 5
+blocks.0.attn.W_O (250, 9, 10) 4
+blocks.0.attn.W_O (286, 9, 10) 2
+blocks.0.attn.W_O (492, 8, 2) 2
+blocks.0.attn.W_O (518, 9, 10) 2
+blocks.0.attn.W_O (576, 9, 10) 2
+blocks.0.attn.W_O (734, 9, 10) 2
+blocks.0.attn.W_V (23, 459, 3) 2
+blocks.0.attn.W_V (23, 674, 8) 2
+blocks.0.attn.W_V (43, 674, 8) 61
+blocks.0.attn.W_V (47, 674, 8) 10
+blocks.0.attn.b_O (34,) 2
+blocks.0.attn.b_O (40,) 3
+blocks.0.attn.b_O (47,) 3
+blocks.0.attn.b_O (155,) 2
+blocks.0.attn.b_O (171,) 3
+blocks.0.attn.b_O (250,) 3
+blocks.0.attn.b_O (492,) 2
+blocks.0.attn.b_O (518,) 3
+blocks.0.attn.b_O (576,) 2
+blocks.0.attn.b_O (630,) 2
+blocks.0.attn.b_O (734,) 2
+blocks.0.attn.b_V (23, 8) 2
+blocks.0.attn.b_V (36, 6) 5
+blocks.0.attn.b_V (37, 3) 2
+blocks.0.attn.b_V (43, 8) 62
+blocks.0.attn.b_V (47, 8) 13
+blocks.0.attn.b_V (49, 8) 2
+blocks.0.mlp.b_in (1797,) 2
+blocks.0.mlp.b_in (2454,) 3
+blocks.0.mlp.b_in (2533,) 7
+blocks.1.attn.W_K (1, 393, 7) 2
+blocks.1.attn.W_K (50, 87, 3) 2
+blocks.1.attn.W_K (62, 480, 10) 9
+blocks.1.attn.W_Q (2, 288, 10) 2
+blocks.1.attn.W_Q (2, 393, 3) 4
+blocks.1.attn.W_Q (2, 393, 10) 8
+blocks.1.attn.W_Q (2, 640, 10) 4
+blocks.1.attn.W_Q (33, 393, 4) 2
+blocks.1.attn.W_Q (50, 288, 3) 2
+blocks.1.attn.W_Q (50, 393, 3) 9
+blocks.1.attn.W_Q (62, 393, 10) 2
+blocks.1.attn.W_Q (62, 640, 10) 2
+blocks.1.mlp.W_out (497, 1429) 2
+blocks.1.mlp.b_in (302,) 3
+blocks.10.attn.W_K (45, 481, 3) 3
+blocks.10.attn.W_K (57, 481, 3) 2
+blocks.10.attn.W_Q (14, 481, 9) 3
+blocks.10.attn.W_Q (27, 481, 5) 4
+blocks.10.attn.W_Q (31, 481, 6) 2
+blocks.10.attn.W_Q (48, 481, 2) 3
+blocks.10.attn.W_Q (52, 481, 6) 4
+blocks.10.attn.W_Q (61, 481, 7) 2
+blocks.10.mlp.W_in (168, 481) 2
+blocks.10.mlp.W_in (571, 481) 7
+blocks.10.mlp.W_in (894, 481) 2
+blocks.10.mlp.W_in (955, 481) 2
+blocks.10.mlp.W_in (1486, 481) 2
+blocks.10.mlp.W_in (1521, 481) 6
+blocks.10.mlp.W_in (2690, 481) 2
+blocks.10.mlp.W_out (266, 1165) 2
+blocks.11.attn.W_Q (14, 481, 3) 22
+blocks.11.attn.b_Q (14, 3) 3
+blocks.11.mlp.W_in (105, 496) 2
+blocks.11.mlp.W_in (229, 481) 2
+blocks.11.mlp.W_in (229, 496) 13
+blocks.11.mlp.W_in (896, 496) 4
+blocks.11.mlp.W_in (1460, 496) 43
+blocks.11.mlp.b_in (1460,) 11
+blocks.2.attn.W_Q (12, 393, 7) 5
+blocks.2.attn.W_Q (34, 393, 11) 2
+blocks.2.attn.W_Q (37, 195, 11) 2
+blocks.2.attn.W_Q (37, 288, 11) 6
+blocks.2.attn.W_Q (37, 393, 11) 15
+blocks.2.attn.W_Q (37, 640, 11) 4
+blocks.2.mlp.W_in (2015, 393) 3
+blocks.2.mlp.W_out (87, 2997) 2
+blocks.2.mlp.W_out (266, 666) 14
+blocks.3.attn.W_K (29, 393, 2) 2
+blocks.3.mlp.W_out (266, 2614) 2
+blocks.4.mlp.W_out (266, 1894) 2
+blocks.5.attn.W_O (266, 7, 1) 3
+blocks.5.attn.b_V (25, 11) 2
+blocks.5.mlp.W_out (266, 1888) 2
+blocks.6.attn.b_V (39, 2) 2
+blocks.7.attn.b_V (2, 6) 3
+blocks.7.attn.b_V (13, 6) 2
+blocks.7.attn.b_V (38, 6) 2
+blocks.7.mlp.W_out (266, 2367) 4
+blocks.8.attn.b_Q (3, 10) 2
+blocks.8.attn.b_V (4, 10) 2
+blocks.8.mlp.b_in (428,) 16
+blocks.8.mlp.b_in (1961,) 4
+blocks.9.attn.W_Q (40, 481, 3) 3
+blocks.9.mlp.W_in (342, 481) 2
+blocks.9.mlp.W_in (1305, 481) 3
+blocks.9.mlp.W_in (2196, 481) 2
+blocks.9.mlp.W_in (2916, 481) 2
+blocks.9.mlp.W_out (266, 1017) 3
+blocks.9.mlp.W_out (393, 840) 4
+unembed.W_U (1175, 496) 69
+unembed.b_U (1175,) 95
