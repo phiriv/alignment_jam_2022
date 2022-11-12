@@ -62,35 +62,35 @@ print(f'Got probs and activations. {token_n_train} total training tokens')
 
 unembed = model.unembed.W_U.data.to('cpu')
 
+X = []
+y = []
 for i in range(n_train, min(n + num_to_display, n)):
     if tokens[i] == None:
         continue
+    string = ''
 
     activ = activs[i]
     print(activ.shape, unembed.shape)
     guess_logits = torch.matmul(activ, unembed)
     guess_probs = torch.nn.functional.softmax(guess_logits, dim=1)
-    for r in range(2):
-        string = ''
-        for j in range(len(tokens[i])):
-            tok = model.tokenizer.decode(tokens[i][j])
-            if j > 0:
-                if r == 1:
-                    prob = guess_probs[j-1,war_index].item()
-                else:
-                    prob = probs[i][j-1,war_index].item()
+    for j in range(len(tokens[i])):
+        tok = model.tokenizer.decode(tokens[i][j])
+        if j > 0:
+            prob = probs[i][j-1,war_index].item()
 
-                if prob > 0.01:
-                    string += '\033[31m'
-                    string += tok
-                elif prob > 0.001:
-                    string += '\033[33m'
-                    string += tok
-                else:
-                    string += '\033[m'
-                    string += tok
+            if prob > 0.001:
+                X.append(
+                y.append(prob)
+                string += '\033[31m'
+                string += tok
+            elif prob > 0.001:
+                string += '\033[33m'
+                string += tok
             else:
                 string += '\033[m'
                 string += tok
+        else:
+            string += '\033[m'
+            string += tok
         print(f'{string}\033[m')
 

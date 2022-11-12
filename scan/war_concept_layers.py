@@ -4,16 +4,17 @@ import json
 import numpy as np
 from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
 
-short = 10
+short = 100
 
-layer = 11
+n_layers = 12
 mlp_layer_size = 3072
 vocab_size = 50257
 num_to_display = 20
+max_display_tokens = 20
 
-activation_cache = []
-def activation_hook(neuron_acts, hook):
-    activation_cache.append(neuron_acts.to('cpu'))
+activation_cache = [None] * (n_layers + 1)
+def activation_hook(neuron_acts, hook, layer):
+    activation_cache[layer] = neuron_acts[0,:,:].to('cpu')
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(f"Using {device} device")
@@ -23,8 +24,10 @@ model = EasyTransformer.from_pretrained('gpt2').to(device)
 print("Loaded model. n_blocks = {len(model.blocks)}")
 
 #model.blocks[layer].mlp.hook_post.add_hook(activation_hook)
-model.blocks[layer].hook_mlp_out.add_hook(activation_hook)
-print("Added hook")
+for layer in range(n_layers):
+    model.blocks[layer].hook_mlp_out.add_hook(lambda a,hook,layer=layer: activation_hook(a,hook,layer))
+model.ln_final.hook_normalized.add_hook(lambda a,hook: activation_hook(a, hook, 12))
+print("Added hooks")
 
 war_index = model.tokenizer.encode(' war')[0]
 print(f'War index: {war_index}')
@@ -50,35 +53,35 @@ for i,item in enumerate(data[:n]):
     if prompt_tokens.shape[1] == 0:
         continue
     tokens[i] = prompt_tokens[0]
-    activation_cache = []
+    activation_cache = [None] * (n_layers + 1)
     logits = model(prompt_tokens)[0,:,:].to('cpu')
     probs[i] = torch.nn.functional.softmax(logits, dim=1)
-    activs[i] = activation_cache[0][0]
+    activs[i] = list(activation_cache)
     if i < n_train:
         token_n_train += prompt_tokens.shape[1]
     if i % 10 == 0:
         print(f'{i} / {n}')
 print(f'Got probs and activations. {token_n_train} total training tokens')
 
-unembed = model.unembed.W_U.data.to('cpu')
+unembed_w = model.unembed.W_U.data.to('cpu')
+unembed_b = model.unembed.b_U.data.to('cpu')
 
 for i in range(n_train, min(n + num_to_display, n)):
     if tokens[i] == None:
         continue
+    n_tok = min(len(tokens[i]), max_display_tokens)
 
-    activ = activs[i]
-    print(activ.shape, unembed.shape)
-    guess_logits = torch.matmul(activ, unembed)
-    guess_probs = torch.nn.functional.softmax(guess_logits, dim=1)
-    for r in range(2):
+    for layer in range(n_layers+2):
         string = ''
-        for j in range(len(tokens[i])):
+        if layer == n_layers + 1:
+            guess_probs = probs[i]
+        else:
+            guess_logits = torch.matmul(activs[i][layer], unembed_w) + unembed_b
+            guess_probs = torch.nn.functional.softmax(guess_logits, dim=1)
+        for j in range(n_tok):
             tok = model.tokenizer.decode(tokens[i][j])
             if j > 0:
-                if r == 1:
-                    prob = guess_probs[j-1,war_index].item()
-                else:
-                    prob = probs[i][j-1,war_index].item()
+                prob = guess_probs[j-1,war_index].item()
 
                 if prob > 0.01:
                     string += '\033[31m'
