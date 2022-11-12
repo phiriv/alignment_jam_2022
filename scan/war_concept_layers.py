@@ -13,7 +13,7 @@ vocab_size = 50257
 num_to_display = 20
 max_display_tokens = 20
 
-activation_cache = [None] * (n_layers + 1)
+activation_cache = [None] * n_layers
 def activation_hook(neuron_acts, hook, layer):
     activation_cache[layer] = neuron_acts[0,:,:].to('cpu')
 
@@ -34,7 +34,7 @@ print("Loaded model. n_blocks = {len(model.blocks)}")
 #model.blocks[layer].mlp.hook_post.add_hook(activation_hook)
 for layer in range(n_layers):
     model.blocks[layer].hook_resid_post.add_hook(lambda a,hook,layer=layer: activation_hook(a,hook,layer))
-model.ln_final.hook_normalized.add_hook(lambda a,hook: activation_hook(a, hook, 12))
+#model.ln_final.hook_normalized.add_hook(lambda a,hook: activation_hook(a, hook, 12))
 print("Added hooks")
 
 war_index = model.tokenizer.encode(' war')[0]
@@ -61,7 +61,7 @@ for i,item in enumerate(data[:n]):
     if prompt_tokens.shape[1] == 0:
         continue
     tokens[i] = prompt_tokens[0]
-    activation_cache = [None] * (n_layers + 1)
+    activation_cache = [None] * n_layers
     logits = model(prompt_tokens)[0,:,:].to('cpu')
     probs[i] = torch.nn.functional.softmax(logits, dim=1)
     activs[i] = list(activation_cache)
@@ -79,15 +79,12 @@ for i in range(n_train, min(n + num_to_display, n)):
         continue
     n_tok = min(len(tokens[i]), max_display_tokens)
 
-    for layer in range(n_layers+2):
+    for layer in range(n_layers):
         string = ''
-        if layer == n_layers + 1:
-            guess_probs = probs[i]
-        else:
-            guess_logits = torch.matmul(activs[i][layer], unembed_w) + unembed_b
-            if layer < n_layers:
-                guess_logits = layer_norm_pre(guess_logits)
-            guess_probs = torch.nn.functional.softmax(guess_logits, dim=1)
+        a = activs[i][layer]
+        a = layer_norm_pre(a)
+        guess_logits = torch.matmul(a, unembed_w) + unembed_b
+        guess_probs = torch.nn.functional.softmax(guess_logits, dim=1)
         for j in range(n_tok):
             tok = model.tokenizer.decode(tokens[i][j])
             if j > 0:
