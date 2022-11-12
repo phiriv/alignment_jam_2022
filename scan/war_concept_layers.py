@@ -2,6 +2,7 @@ import torch
 from easy_transformer import EasyTransformer
 import json
 import numpy as np
+import einops
 from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge
 
 short = 100
@@ -16,6 +17,13 @@ activation_cache = [None] * (n_layers + 1)
 def activation_hook(neuron_acts, hook, layer):
     activation_cache[layer] = neuron_acts[0,:,:].to('cpu')
 
+def layer_norm_pre(x):
+    global model
+    x = x - x.mean(axis=-1, keepdim=True)
+    scale = (einops.reduce(x.pow(2), 'pos embed -> pos 1', 'mean') + model.cfg.eps).sqrt()
+    return x / scale
+
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(f"Using {device} device")
 torch.set_grad_enabled(False)
@@ -25,7 +33,7 @@ print("Loaded model. n_blocks = {len(model.blocks)}")
 
 #model.blocks[layer].mlp.hook_post.add_hook(activation_hook)
 for layer in range(n_layers):
-    model.blocks[layer].hook_mlp_out.add_hook(lambda a,hook,layer=layer: activation_hook(a,hook,layer))
+    model.blocks[layer].hook_resid_post.add_hook(lambda a,hook,layer=layer: activation_hook(a,hook,layer))
 model.ln_final.hook_normalized.add_hook(lambda a,hook: activation_hook(a, hook, 12))
 print("Added hooks")
 
@@ -77,6 +85,8 @@ for i in range(n_train, min(n + num_to_display, n)):
             guess_probs = probs[i]
         else:
             guess_logits = torch.matmul(activs[i][layer], unembed_w) + unembed_b
+            if layer < n_layers:
+                guess_logits = layer_norm_pre(guess_logits)
             guess_probs = torch.nn.functional.softmax(guess_logits, dim=1)
         for j in range(n_tok):
             tok = model.tokenizer.decode(tokens[i][j])
